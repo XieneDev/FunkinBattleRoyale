@@ -1,0 +1,46 @@
+{
+"datatypes": [
+	{"id": "UINT", "size": 4},
+	{"id": "INT", "size": 4},
+	{"id": "UBYTE", "size": 1},
+	{"id": "BYTE", "size": 1},
+
+	{"id": "STRING", "size": 2, "variable": true},
+	{"id": "FILE", "size": 4, "variable": true}
+],
+"packets": [
+	{"id": "SEND_CLIENT_TOKEN", "args": ["UINT"]},
+	{"id": "SEND_SERVER_TOKEN", "args": ["UINT"]},
+	{"id": "SEND_PASSWORD", "args": ["STRING"]},
+	{"id": "PASSWORD_CONFIRM", "args": ["UBYTE"]},
+	{"id": "SEND_NICKNAME", "args": ["STRING"]},
+	{"id": "NICKNAME_CONFIRM", "args": ["UBYTE"]},
+
+	{"id": "BROADCAST_NEW_PLAYER", "args": ["UBYTE", "STRING"]},
+	{"id": "END_PREV_PLAYERS", "args": []},
+	{"id": "JOINED_LOBBY", "args": []},
+	{"id": "PLAYER_LEFT", "args": ["UBYTE"]},
+	{"id": "GAME_START", "args": ["STRING", "STRING"]},
+
+	{"id": "GAME_READY", "args": []},
+	{"id": "PLAYERS_READY", "args": ["UBYTE"]},
+	{"id": "EVERYONE_READY", "args": ["UBYTE"]},
+	{"id": "SEND_SCORE", "args": ["INT"]},
+	{"id": "BROADCAST_SCORE", "args": ["UBYTE", "INT"]},
+	{"id": "GAME_END", "args": []},
+	{"id": "FORCE_GAME_END", "args": []},
+
+	{"id": "SEND_CHAT_MESSAGE", "args": ["STRING"]},
+	{"id": "BROADCAST_CHAT_MESSAGE", "args": ["UBYTE", "STRING"]},
+
+	{"id": "READY_DOWNLOAD", "args": []},
+	{"id": "SEND_CHART", "args": ["FILE"]},
+	{"id": "SEND_VOICES", "args": ["FILE"]},
+	{"id": "SEND_INST", "args": ["FILE"]},
+	{"id": "REQUEST_VOICES", "args": []},
+	{"id": "REQUEST_INST", "args": []},
+	{"id": "DENY", "args": []},
+	
+	{"id": "KEEP_ALIVE", "args": []}
+]
+}

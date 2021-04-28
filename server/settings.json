@@ -1,0 +1,7 @@
+{
+"port": 9876,
+"password": "admin",
+"keep_alive": 10000,
+"wait": 20000,
+"safe_frames": 10
+}
