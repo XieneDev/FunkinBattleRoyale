@@ -2,17 +2,22 @@
 
 This is a mod for **Friday Night Funkin'** that lets you play with other people and compete to get high scores on real time, with support for custom songs that are downloaded automatically.
 
+[**IF YOU WANT TO HOST A SERVER, READ THIS**](server/README.md)
+
 Built on top of [Kade Engine](https://github.com/KadeDev/Kade-Engine) 1.4.2.
 
-This mod only changes a couple of files from Kade Engine, so the source code doesn't contain the Kade Engine source code, nor does it fork it or something similar. To compile, you'll need to download the source code of the appropriate Kade Engine version.
+This mod only changes a couple of files from Kade Engine, so the source code doesn't contain the Kade Engine source code, nor does it fork it or something similar. To compile, you'll need to download the source code of the appropriate Kade Engine version and apply the source code of this mod on top of it. **If you just want to play, don't worry about this.**
 
-To host a server you will need [Node.js](https://nodejs.org). For more info, check the [this page](server/README.md).
+# Screenshots ([skip](#Features))
 
-[YouTube video about the development of this mod](https://youtu.be/EORzXsDwKUk).
-
-# Screenshots
-
-I'll add these later.
+![](images/gameplay.gif)
+![](images/loading_bar.gif)
+![](images/gameplay.png)
+![](images/waiting.png)
+![](images/main_menu.png)
+![](images/lobby.png)
+![](images/online_menu.png)
+![](images/connect_menu.png)
 
 # Features
 
@@ -45,5 +50,5 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 
 # Other pages
 
-- [Server Info](server/README.md) - More info on how to host a server
+- [Server info](server/README.md) - More info on how to host a server
 - [BUILDING.md](https://github.com/KadeDev/Kade-Engine/blob/master/BUILDING.md) - How to compile/build the game. This points to the BUILDING.md inside the Kade Engine repository.
