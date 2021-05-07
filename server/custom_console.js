@@ -11,7 +11,7 @@ var body = blessed.box({
   height: '100%-1',
   width: '100%',
   keys: true,
-  vi: true,
+  // vi: true,
   mouse: true,
   alwaysScroll: true,
   scrollable: true,
@@ -43,6 +43,8 @@ screen.key(['escape', 'C-c'], (ch, key) => (process.exit(0)));
 
 const custom_console = {};
 
+custom_console.body = body;
+
 custom_console.handle = function(input) {}
 
 // Handle submitting data
@@ -57,6 +59,7 @@ inputBar.focus();
 // Add text to body (replacement for console.log)
 function log(text) {
   body.pushLine(text);
+  body.setScrollPerc(100);
   screen.render();
 }
 custom_console.log = log;

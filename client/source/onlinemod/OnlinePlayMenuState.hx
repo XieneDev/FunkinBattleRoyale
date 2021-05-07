@@ -109,6 +109,18 @@ class OnlinePlayMenuState extends MusicBeatState
 		add(connectButton);
 
 
+    var helpButton = new FlxUIButton(FlxG.width - 170, FlxG.height * 0.925 - 20, "Help", () -> {
+      #if linux
+      Sys.command('/usr/bin/xdg-open', ["https://github.com/XieneDev/FunkinBattleRoyale/blob/main/HELP.md", "&"]);
+      #else
+      FlxG.openURL('https://github.com/XieneDev/FunkinBattleRoyale/blob/main/HELP.md');
+      #end
+    });
+    helpButton.setLabelFormat(24, FlxColor.BLACK, CENTER);
+    helpButton.resize(150, FlxG.height * 0.075);
+    add(helpButton);
+
+
     AddXieneText(this);
 
 
@@ -155,18 +167,17 @@ class OnlinePlayMenuState extends MusicBeatState
             socket.close();
         }
       case Packets.PASSWORD_CONFIRM:
-        if (data[0] == 0)
+        switch (data[0])
         {
-          SetErrorText("Correct password", FlxColor.LIME);
-          FlxG.switchState(new OnlineNickState());
-        }
-        else if (data[0] == 1)
-        {
-          SetErrorText("Game already in progress");
-        }
-        else
-        {
-          SetErrorText("Wrong password");
+          case 0:
+            SetErrorText("Correct password", FlxColor.LIME);
+            FlxG.switchState(new OnlineNickState());
+          case 1:
+            SetErrorText("Game already in progress");
+          case 2:
+            SetErrorText("Wrong password");
+          case 3:
+            SetErrorText("Game is already full");
         }
     }
 	}

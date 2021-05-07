@@ -41,8 +41,11 @@ class Packets
   public static var GAME_END(default, never) = new Packet([]).id;
   public static var FORCE_GAME_END(default, never) = new Packet([]).id;
 
-  public static var SEND_CHAT_MESSAGE(default, never) = new Packet([DataTypes.STRING]).id;
+  public static var SEND_CHAT_MESSAGE(default, never) = new Packet([DataTypes.UBYTE, DataTypes.STRING]).id;
+  public static var REJECT_CHAT_MESSAGE(default, never) = new Packet([DataTypes.UBYTE]).id;
+  public static var MUTED(default, never) = new Packet([]).id;
   public static var BROADCAST_CHAT_MESSAGE(default, never) = new Packet([DataTypes.UBYTE, DataTypes.STRING]).id;
+  public static var SERVER_CHAT_MESSAGE(default, never) = new Packet([DataTypes.STRING]).id;
 
   public static var READY_DOWNLOAD(default, never) = new Packet([]).id;
   public static var SEND_CHART(default, never) = new Packet([DataTypes.FILE]).id;
@@ -53,6 +56,8 @@ class Packets
   public static var DENY(default, never) = new Packet([]).id;
 
   public static var KEEP_ALIVE(default, never) = new Packet([]).id;
+
+  public static var DISCONNECT(default, never) = new Packet([]).id;
 }
 
 class PacketsShit

@@ -46,7 +46,7 @@ class OnlineResultState extends MusicBeatState
     {
       var name:String = clients[i];
       var score = OnlinePlayState.clientScores[i];
-      var text:FlxText = new FlxText(0, FlxG.height*0.2 + 40*x, '${x+1}. $name: $score');
+      var text:FlxText = new FlxText(0, FlxG.height*0.2 + 30*x, '${x+1}. $name: $score');
 
       if (i == -1)
         text.text += " (YOU)";
@@ -55,14 +55,14 @@ class OnlineResultState extends MusicBeatState
       if (!OnlineLobbyState.clients.exists(i) && i != -1)
         color = FlxColor.RED;
 
-      text.setFormat(Paths.font("vcr.ttf"), 32, color, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+      text.setFormat(Paths.font("vcr.ttf"), 24, color, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
       text.screenCenter(FlxAxes.X);
       add(text);
       x++;
     }
 
 
-    OnlineLobbyState.addChatUI(this);
+    Chat.createChat(this);
 
 
     FlxG.sound.music.time = 0;
@@ -89,12 +89,12 @@ class OnlineResultState extends MusicBeatState
         var nick:String = data[1];
 
         OnlineLobbyState.addPlayer(id, nick);
-        OnlineLobbyState.OutputSystemChatMessage('$nick joined the game');
+        Chat.PLAYER_JOIN(nick);
       case Packets.PLAYER_LEFT:
         var id:Int = data[0];
         var nickname:String = OnlineLobbyState.clients[id];
 
-        OnlineLobbyState.OutputSystemChatMessage('$nickname left the game');
+        Chat.PLAYER_LEAVE(nickname);
         OnlineLobbyState.removePlayer(id);
       case Packets.GAME_START:
         var jsonInput:String = data[0];
@@ -106,13 +106,22 @@ class OnlineResultState extends MusicBeatState
         var id:Int = data[0];
         var message:String = data[1];
 
-        OnlineLobbyState.OutputChatMessage('<${OnlineLobbyState.clients[id]}> $message');
+        Chat.MESSAGE(OnlineLobbyState.clients[id], message);
+      case Packets.REJECT_CHAT_MESSAGE:
+        Chat.SPEED_LIMIT();
+      case Packets.MUTED:
+        Chat.MUTED();
+      case Packets.SERVER_CHAT_MESSAGE:
+        Chat.SERVER_MESSAGE(data[0]);
+
+      case Packets.DISCONNECT:
+        FlxG.switchState(new OnlinePlayMenuState("Disconnected from server"));
     }
   }
 
   override function update(elapsed:Float)
   {
-    if (!OnlineLobbyState.chatField.hasFocus)
+    if (!Chat.chatField.hasFocus)
     {
       OnlinePlayMenuState.SetVolumeControls(true);
       if (controls.BACK)
@@ -123,7 +132,7 @@ class OnlineResultState extends MusicBeatState
       OnlinePlayMenuState.SetVolumeControls(false);
       if (FlxG.keys.justPressed.ENTER)
       {
-        OnlineLobbyState.SendChatMessage();
+        Chat.SendChatMessage();
       }
     }
 

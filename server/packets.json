@@ -30,8 +30,11 @@
 	{"id": "GAME_END", "args": []},
 	{"id": "FORCE_GAME_END", "args": []},
 
-	{"id": "SEND_CHAT_MESSAGE", "args": ["STRING"]},
+	{"id": "SEND_CHAT_MESSAGE", "args": ["UBYTE", "STRING"]},
+	{"id": "REJECT_CHAT_MESSAAGE", "args": ["UBYTE"]},
+	{"id": "MUTED", "args": []},
 	{"id": "BROADCAST_CHAT_MESSAGE", "args": ["UBYTE", "STRING"]},
+	{"id": "SERVER_CHAT_MESSAGE", "args": ["STRING"]},
 
 	{"id": "READY_DOWNLOAD", "args": []},
 	{"id": "SEND_CHART", "args": ["FILE"]},
@@ -41,6 +44,8 @@
 	{"id": "REQUEST_INST", "args": []},
 	{"id": "DENY", "args": []},
 	
-	{"id": "KEEP_ALIVE", "args": []}
+	{"id": "KEEP_ALIVE", "args": []},
+	
+	{"id": "DISCONNECT", "args": []}
 ]
 }

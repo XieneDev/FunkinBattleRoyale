@@ -17,8 +17,6 @@ import sys.io.File;
 import sys.io.FileOutput;
 import sys.FileSystem;
 
-using StringTools;
-
 class OnlineLoadState extends MusicBeatState
 {
   var loadingText:FlxText;
@@ -92,7 +90,17 @@ class OnlineLoadState extends MusicBeatState
     super.create();
 
 
+    Chat.created = false;
+
+
+
     OnlinePlayMenuState.receiver.HandleData = HandleData;
+
+
+    // Make sure we are still connected to the server
+    new FlxTimer().start(5, (timer:FlxTimer) -> {
+      Sender.SendPacket(Packets.KEEP_ALIVE, [], OnlinePlayMenuState.socket);
+    }, 0);
 
 
     new FlxTimer().start(transIn.duration, (timer:FlxTimer) -> {
@@ -219,13 +227,24 @@ class OnlineLoadState extends MusicBeatState
         var id:Int = data[0];
         var message:String = data[1];
 
-        OnlineLobbyState.RegisterChatMessage('<${OnlineLobbyState.clients[id]}> $message');
+        Chat.MESSAGE(OnlineLobbyState.clients[id], message);
+      case Packets.REJECT_CHAT_MESSAGE:
+        Chat.SPEED_LIMIT();
+      case Packets.SERVER_CHAT_MESSAGE:
+        Chat.SERVER_MESSAGE(data[0]);
+
       case Packets.PLAYER_LEFT:
         var id:Int = data[0];
         var nickname:String = OnlineLobbyState.clients[id];
 
         OnlineLobbyState.removePlayer(id);
-        OnlineLobbyState.RegisterChatMessage('$nickname left the game', FlxColor.YELLOW);
+        Chat.PLAYER_LEAVE(nickname);
+
+      case Packets.FORCE_GAME_END:
+        FlxG.switchState(new OnlineLobbyState(true));
+
+      case Packets.DISCONNECT:
+        FlxG.switchState(new OnlinePlayMenuState("Disconnected from server"));
     }
   }
 

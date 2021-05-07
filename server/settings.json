@@ -2,6 +2,8 @@
 "port": 9876,
 "password": "admin",
 "keep_alive": 10000,
-"wait": 20000,
-"safe_frames": 10
+"wait": 180000,
+"chat_speed": 1000,
+"safe_frames": 10,
+"max_players": 24
 }

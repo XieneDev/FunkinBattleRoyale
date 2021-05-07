@@ -15,6 +15,10 @@ import flash.media.Sound;
 
 import Section.SwagSection;
 
+#if windows
+import Discord.DiscordClient;
+#end
+
 class OnlinePlayState extends PlayState
 {
   var clients:Map<Int, String> = [];
@@ -54,9 +58,6 @@ class OnlinePlayState extends PlayState
     }
 
     super.create();
-
-    // For the discord rich presence
-    detailsText = "Online";
 
 
     clients = OnlineLobbyState.clients.copy();
@@ -348,8 +349,19 @@ class OnlinePlayState extends PlayState
         clientsGroup.members[clientTexts[id]].setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 
         OnlineLobbyState.removePlayer(id);
-        OnlineLobbyState.RegisterChatMessage('$nickname left the game', FlxColor.YELLOW);
+        Chat.PLAYER_LEAVE(nickname);
         clientCount--;
+
+      case Packets.REJECT_CHAT_MESSAGE:
+        Chat.SPEED_LIMIT();
+      case Packets.SERVER_CHAT_MESSAGE:
+        Chat.SERVER_MESSAGE(data[0]);
+
+      case Packets.FORCE_GAME_END:
+        FlxG.switchState(new OnlineLobbyState(true));
+
+      case Packets.DISCONNECT:
+        FlxG.switchState(new OnlinePlayMenuState("Disconnected from server"));
     }
   }
 

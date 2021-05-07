@@ -22,15 +22,12 @@ class OnlineLobbyState extends MusicBeatState
   var clientCount:Int = 0; // Amount of clients in the lobby
 
   static inline var NAMES_PER_ROW:Int = 5;
+  static inline var NAMES_SIZE:Int = 32;
+  static inline var NAMES_VERTICAL_SPACING:Int = 48;
 
   public static var clients:Map<Int, String> = []; // Maps a player ID to the corresponding nickname
   public static var clientsOrder:Array<Int> = []; // This array holds ID values in order of join time (including ID -1 for self)
   public static var receivedPrevPlayers:Bool = false;
-
-  public static var chatField:FlxInputText;
-  public static var chatMessagesList:FlxUIList;
-  public static var chatSendButton:FlxUIButton;
-  public static var chatMessages:Array<Array<Dynamic>>;
 
   var keepClients:Bool;
 
@@ -44,7 +41,7 @@ class OnlineLobbyState extends MusicBeatState
       clientsOrder = [];
       receivedPrevPlayers = false;
 
-      chatMessages = [];
+      Chat.chatMessages = [];
     }
 
     this.keepClients = keepClients;
@@ -65,18 +62,15 @@ class OnlineLobbyState extends MusicBeatState
     clientsGroup = new FlxTypedGroup<FlxText>();
     add(clientsGroup);
 
-    for (i in clientsOrder)
-    {
-      var nick:String = i != -1 ? clients[i] : OnlineNickState.nickname;
-      addPlayerUI(i, nick, i == -1 ? FlxColor.YELLOW : null);
-    }
+
+    createNamesUI();
 
 
-    addChatUI(this);
+    Chat.createChat(this);
 
 
     if (!keepClients)
-      OutputSystemChatMessage('${OnlineNickState.nickname} joined the game');
+      Chat.PLAYER_JOIN(OnlineNickState.nickname);
 
 
     OnlinePlayMenuState.AddXieneText(this);
@@ -94,6 +88,19 @@ class OnlineLobbyState extends MusicBeatState
     super.create();
   }
 
+  function createNamesUI()
+  {
+    clientsGroup.clear();
+    clientTexts = [];
+    clientCount = 0;
+
+    for (i in clientsOrder)
+    {
+      var nick:String = i != -1 ? clients[i] : OnlineNickState.nickname;
+      addPlayerUI(i, nick, i == -1 ? FlxColor.YELLOW : null);
+    }
+  }
+
   function HandleData(packetId:Int, data:Array<Dynamic>)
   {
     OnlinePlayMenuState.RespondKeepAlive(packetId);
@@ -106,7 +113,7 @@ class OnlineLobbyState extends MusicBeatState
         addPlayerUI(id, nickname);
         addPlayer(id, nickname);
         if (receivedPrevPlayers)
-          OutputSystemChatMessage('$nickname joined the game');
+          Chat.PLAYER_JOIN(nickname);
       case Packets.END_PREV_PLAYERS:
         receivedPrevPlayers = true;
         addPlayerUI(-1, OnlineNickState.nickname, FlxColor.YELLOW);
@@ -114,10 +121,10 @@ class OnlineLobbyState extends MusicBeatState
       case Packets.PLAYER_LEFT:
         var id:Int = data[0];
         var nickname:String = OnlineLobbyState.clients[id];
-        OutputSystemChatMessage('$nickname left the game');
+        Chat.PLAYER_LEAVE(nickname);
 
-        removePlayerUI(id);
         removePlayer(id);
+        createNamesUI();
       case Packets.GAME_START:
         var jsonInput:String = data[0];
         var folder:String = data[1];
@@ -128,7 +135,16 @@ class OnlineLobbyState extends MusicBeatState
         var id:Int = data[0];
         var message:String = data[1];
 
-        OutputChatMessage('<${OnlineLobbyState.clients[id]}> $message');
+        Chat.MESSAGE(OnlineLobbyState.clients[id], message);
+      case Packets.REJECT_CHAT_MESSAGE:
+        Chat.SPEED_LIMIT();
+      case Packets.MUTED:
+        Chat.MUTED();
+      case Packets.SERVER_CHAT_MESSAGE:
+        Chat.SERVER_MESSAGE(data[0]);
+
+      case Packets.DISCONNECT:
+        FlxG.switchState(new OnlinePlayMenuState("Disconnected from server"));
     }
   }
 
@@ -149,8 +165,8 @@ class OnlineLobbyState extends MusicBeatState
 
   function addPlayerUI(id:Int, nickname:String, ?color:FlxColor=FlxColor.WHITE)
   {
-    var text:FlxText = new FlxText((clientCount % NAMES_PER_ROW) * FlxG.width/NAMES_PER_ROW, FlxG.height*0.2 + Std.int(clientCount / NAMES_PER_ROW) * FlxG.height*0.2, FlxG.width/NAMES_PER_ROW, nickname);
-    text.setFormat(Paths.font("vcr.ttf"), 32, color, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    var text:FlxText = new FlxText((clientCount % NAMES_PER_ROW) * FlxG.width/NAMES_PER_ROW, FlxG.height*0.2 + Std.int(clientCount / NAMES_PER_ROW) * NAMES_VERTICAL_SPACING, FlxG.width/NAMES_PER_ROW, nickname);
+    text.setFormat(Paths.font("vcr.ttf"), NAMES_SIZE, color, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     clientTexts[id] = clientsGroup.length;
     clientsGroup.add(text);
     clientCount++;
@@ -181,69 +197,10 @@ class OnlineLobbyState extends MusicBeatState
     clientCount--;
   }
 
-  public static function OutputChatMessage(message:String, ?color:FlxColor=FlxColor.WHITE, ?register:Bool=true)
-  {
-    var text = new FlxText(0, 0, message);
-    text.setFormat(Paths.font("vcr.ttf"), 24, color, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-    OnlineLobbyState.chatMessagesList.add(text);
-
-    if (OnlineLobbyState.chatMessagesList.amountNext == 0)
-      OnlineLobbyState.chatMessagesList.y -= text.height + OnlineLobbyState.chatMessagesList.spacing;
-    else
-      OnlineLobbyState.chatMessagesList.scrollIndex += OnlineLobbyState.chatMessagesList.amountNext;
-
-    if (register)
-      RegisterChatMessage(message, color);
-  }
-
-  public static inline function RegisterChatMessage(message:String, ?color:FlxColor=FlxColor.WHITE)
-  {
-    OnlineLobbyState.chatMessages.push([message, color]);
-  }
-
-  public static inline function OutputSystemChatMessage(message:String)
-  {
-    OnlineLobbyState.OutputChatMessage(message, FlxColor.YELLOW);
-  }
-
-  public static function SendChatMessage()
-  {
-    if (chatField.text != '')
-    {
-      Sender.SendPacket(Packets.SEND_CHAT_MESSAGE, [chatField.text], OnlinePlayMenuState.socket);
-
-      OutputChatMessage('<${OnlineNickState.nickname}> ${chatField.text}');
-
-      chatField.text = "";
-      chatField.caretIndex = 0;
-    }
-  }
-
-  public static function addChatUI(state:FlxUIState)
-  {
-    OnlineLobbyState.chatMessagesList = new FlxUIList(10, FlxG.height - 100, FlxG.width, (24 + 1) * 7);
-    state.add(OnlineLobbyState.chatMessagesList);
-    for (chatMessage in OnlineLobbyState.chatMessages)
-    {
-      OnlineLobbyState.OutputChatMessage(chatMessage[0], chatMessage[1], false);
-    }
-
-    OnlineLobbyState.chatField = new FlxInputText(10, FlxG.height - 70, 1152, 20);
-    state.add(OnlineLobbyState.chatField);
-
-    OnlineLobbyState.chatSendButton = new FlxUIButton(10 + 1152 + 9, FlxG.height - 70, "Send", () -> {
-      OnlineLobbyState.SendChatMessage();
-      OnlineLobbyState.chatField.hasFocus = true;
-    });
-    OnlineLobbyState.chatSendButton.setLabelFormat(24, FlxColor.BLACK, CENTER);
-    OnlineLobbyState.chatSendButton.resize(100, OnlineLobbyState.chatField.height);
-    state.add(OnlineLobbyState.chatSendButton);
-  }
-
 
   override function update(elapsed:Float)
   {
-    if (!chatField.hasFocus)
+    if (!Chat.chatField.hasFocus)
     {
       OnlinePlayMenuState.SetVolumeControls(true);
       if (controls.BACK)
@@ -261,7 +218,7 @@ class OnlineLobbyState extends MusicBeatState
       OnlinePlayMenuState.SetVolumeControls(false);
       if (FlxG.keys.justPressed.ENTER)
       {
-        SendChatMessage();
+        Chat.SendChatMessage();
       }
     }
 
