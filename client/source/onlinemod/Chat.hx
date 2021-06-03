@@ -113,7 +113,7 @@ class Chat
         OutputChatMessage('<${OnlineNickState.nickname}> ${chatField.text}');
       }
 
-      chatField.text = "ayo ayo ayo watch yo text bro watch yo text";
+      chatField.text = "";
       chatField.caretIndex = 0;
     }
   }
