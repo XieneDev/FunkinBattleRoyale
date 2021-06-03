@@ -53,4 +53,4 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 # Other pages
 
 - [Server info](server/README.md) - More info on how to host a server.
-- [BUILDING.md](https://github.com/KadeDev/Kade-Engine/blob/master/BUILDING.md) - How to compile/build the game. This points to the BUILDING.md inside the Kade Engine repository.
+- [Building](https://kadedev.github.io/Kade-Engine/building) - How to compile/build the game. This points to the BUILDING.md inside the Kade Engine repository.
