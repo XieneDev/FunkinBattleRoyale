@@ -29,12 +29,12 @@ class Chat
 
   public static inline function PLAYER_JOIN(nickname:String)
   {
-    Chat.OutputChatMessage('$nickname joined the game', systemColor);
+    Chat.OutputChatMessage('$nickname joined the game, say welcome.', systemColor);
   }
 
   public static inline function PLAYER_LEAVE(nickname:String)
   {
-    Chat.OutputChatMessage('$nickname left the game', systemColor);
+    Chat.OutputChatMessage('$nickname left the game, Awww.', systemColor);
   }
 
   public static inline function SERVER_MESSAGE(message:String)
@@ -113,7 +113,7 @@ class Chat
         OutputChatMessage('<${OnlineNickState.nickname}> ${chatField.text}');
       }
 
-      chatField.text = "";
+      chatField.text = "ayo ayo ayo watch yo text bro watch yo text";
       chatField.caretIndex = 0;
     }
   }
