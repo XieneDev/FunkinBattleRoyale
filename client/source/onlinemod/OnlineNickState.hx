@@ -22,7 +22,7 @@ class OnlineNickState extends MusicBeatState
 		add(bg);
 
 
-    var topText = new FlxText(0, FlxG.height * 0.25, "Insert nickname");
+    var topText = new FlxText(0, FlxG.height * 0.25, "Insert nickname.");
     topText.setFormat(Paths.font("vcr.ttf"), 64, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     topText.screenCenter(FlxAxes.X);
     add(topText);
@@ -79,7 +79,7 @@ class OnlineNickState extends MusicBeatState
             SetErrorText("Nickname accepted!", FlxColor.LIME);
             FlxG.switchState(new OnlineLobbyState());
           case 1:
-            SetErrorText("Nickname already claimed, Probably because the host's using ngrok free.");
+            SetErrorText("Nickname already claimed, Choose another one");
           case 2:
             SetErrorText("Game already in progress. Please wait");
           case 3:
