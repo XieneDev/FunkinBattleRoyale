@@ -22,7 +22,7 @@ class OnlineNickState extends MusicBeatState
 		add(bg);
 
 
-    var topText = new FlxText(0, FlxG.height * 0.25, "Insert nickname");
+    var topText = new FlxText(0, FlxG.height * 0.25, "Insert nickname.");
     topText.setFormat(Paths.font("vcr.ttf"), 64, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     topText.screenCenter(FlxAxes.X);
     add(topText);
@@ -76,16 +76,16 @@ class OnlineNickState extends MusicBeatState
         switch (data[0])
         {
           case 0:
-            SetErrorText("Nickname accepted", FlxColor.LIME);
+            SetErrorText("Nickname accepted!", FlxColor.LIME);
             FlxG.switchState(new OnlineLobbyState());
           case 1:
-            SetErrorText("Nickname already claimed");
+            SetErrorText("Nickname already claimed, Choose another one");
           case 2:
-            SetErrorText("Game already in progress");
+            SetErrorText("Game already in progress. Please wait");
           case 3:
-            SetErrorText("Invalid nickname");
+            SetErrorText("Invalid nickname! Please choose another one.");
           case 4:
-            FlxG.switchState(new OnlinePlayMenuState("Game is already full"));
+            FlxG.switchState(new OnlinePlayMenuState("Game is already full, cannot join."));
         }
     }
   }
